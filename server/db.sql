@@ -1,10 +1,10 @@
-CREATE Table jwtuser(
-    userid uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    username VARCHAR(255) NOT NULL,
-    useremail VARCHAR(255) NOT NULL,
-    userpassword VARCHAR(255)NOT NULL
+CREATE Table ser(
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255)NOT NULL
 );
 
 create extension if not exists "uuid-ossp";
 
-INSERT INTO jwtuser(username, useremail, userpassword) VALUES ('max', 'max123@gmail.com','max123');
+INSERT INTO ser(name, email, password) VALUES ('max', 'max123@gmail.com','max123');
