@@ -3,9 +3,11 @@ const router = express.Router()
 const pool = require("../db")
 const bcrypt = require("bcrypt");
 const jwtGenerator = require("../Generator/jwtGenerator");
+const validinfo = require("../middleware/validinfo")
+const authorization = require("../middleware/auth")
 
 //registering a user
-router.post("/register", async(req,res) =>{
+router.post("/register", validinfo, async(req,res) =>{
    
     const {name, email, password} = req.body
     try {
@@ -43,7 +45,7 @@ router.post("/register", async(req,res) =>{
 })
 
 //login user
-router.post("/login", async(req,res) =>{
+router.post("/login", validinfo, async(req,res) =>{
     try {
         // destructure req.body
         const {email, password} = req.body
@@ -64,6 +66,19 @@ router.post("/login", async(req,res) =>{
         // give a JWT token
         const jwtToken = jwtGenerator(user.rows[0].user_id);
         return res.json({ jwtToken });
+        
+    } catch (err) {
+
+        console.error(err.message)
+        res.status(500).send("Server Error")
+        
+    }
+})
+
+router.get("/verify", authorization,  async(req,res) =>{
+    try {
+        
+        res.json(true);
         
     } catch (err) {
 
