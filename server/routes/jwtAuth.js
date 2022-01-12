@@ -75,6 +75,8 @@ router.post("/login", validinfo, async(req,res) =>{
     }
 })
 
+// used to verifty jwt tokens
+
 router.get("/verify", authorization,  async(req,res) =>{
     try {
         
