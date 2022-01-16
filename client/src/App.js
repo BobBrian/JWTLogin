@@ -16,6 +16,7 @@ const App = () => {
 
   return (
     <Fragment>
+      <h1>App Landing Page</h1>
       <Router>
         <div className='container'>
           <Switch>

@@ -1,59 +1,43 @@
-import React,{Fragment, useState } from 'react'
+import React,{Fragment, useState} from 'react'
+import { Link, Redirect } from "react-router-dom";
 
 const Register = ({setAuth}) => {
 
-  //Issue Number one is the Jwt token remain undefined which can be a problem but its probaly an issue with the 
-  //Base code.
+  const [name, setName] = useState("")
+  const [email, setEmail] =useState("")
+  const [password, setPassword] = useState("")
 
-
-  const [inputs, setInputs] = useState({
-      email: "",
-      password: "",
-      name: ""
-  });
-
-  const { email, password, name } = inputs;
-
-  const onChange = e => setInputs({ ...inputs, [e.target.name]: e.target.value });
-
-  const onSubmitForm = async e => {
-
+  const handleSubmit = async e =>{
     e.preventDefault();
     try {
+
       const body = { email, password, name };
-
-      const response = await fetch("http://localhost:5000/auth/register",{
-          method: "POST",
-          headers: {
-            "Content-type": "application/json"
-          },
-          body: JSON.stringify(body)
+      const response = await fetch("http://localhost:5000/JWT/register",{
+         method: "POST",
+         headers: {"Content-Type": "application/json"},
+         body: JSON.stringify(body)
       });
-
-      const parseRes = await response.json();
-
-      localStorage.setItem("token", parseRes.token)
-
 
       setAuth(true)
       
     } catch (err) {
-      console.error(err.message);
+
+      console.error(err.message)
       
     }
-
   }
 
 
   return (
     <Fragment>
-        <h1 className="mt-5 text-center">Register</h1>
-        <form onSubmit={onSubmitForm} >
-           <input type="text" name="email" value={email} placeholder="email" onChange={e => onChange(e)} className="form-control my-3"/>
-           <input type="password" name="password" value={password} placeholder="password" onChange={e => onChange(e)} className="form-control my-3"/>
-           <input type="text" name="name" value={name} placeholder="name" onChange={e => onChange(e)} className="form-control my-3"/>
-           <button className="btn btn-success btn-block">Submit</button>
-        </form>
+       <h1>Register Page</h1>
+       <form>
+           <input type="text" name="email" value={email} placeholder="email" onChange={e => setEmail(e.target.value)} className="form-control my-3"/>
+           <input type="password" name="password" value={password} placeholder="password" onChange={e => setPassword(e.target.value)} className="form-control my-3"/>
+           <input type="text" name="name" value={name} placeholder="name" onChange={e => setName(e.target.value)} className="form-control my-3"/>
+           <button onClick={handleSubmit} type="submit" className="btn btn-success btn-block" > Register </button>
+       </form>
+       <Link to="/login">Login</Link>
     </Fragment>
   )
 }
