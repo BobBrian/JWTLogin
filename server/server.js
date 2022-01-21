@@ -1,11 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const pool = require("./db"); // Needs to be used in the Routes
-//const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt");
 const dotenv = require('dotenv')
-const validinfo = require("./validation")
+const {check , validationResult} = require ("express-validator")
 const jwt = require('jsonwebtoken') // used to generate JWT
 const app = express();
+//const auth = require("./authurization")
 
 //middleware
 app.use(cors())
@@ -13,39 +14,42 @@ app.use(express.json());
 dotenv.config()
 
 //--Routes--
-
 //--Register User--
-// Validation if giving a false so clear that one up
-// As Long as this does not iterfear with the code as a whole then there is no
-// Problem.
 
-app.post("/JWT/register", validinfo,  async (req, res) =>{
+
+app.post("/JWT/register",[check("email", "Please Provide a Valid Email").isEmail(),check("password","Provide a Password with a Minimum of 6 Characters").isLength({ min: 6})] , async (req, res) =>{
     // this works
-    try {
-
+    try 
+    {
         const {name, email, password } = req.body;
+        
+        //These are the express Validators to Ensure that the Data goes in Properly and that
+        // Inproper Data doesnt get returned
 
-        // This is used to check if a User Already exists, Mini Validation
-        const user = await pool.query("SELECT * FROM usersjwt WHERE email = $1", [email]);
-
-        if (user.rows.length !== 0) {
-            return res.status(401).json("User already exist!");
-
+        const errors = validationResult(req)
+        if(!errors.isEmpty()){
+            return res.status(400).json({
+                errors:errors.array()
+            })
         }
 
-        //This is used to encrypt a users password on the database -- Note Not really need for the YelpClone Version
-        //const salt = await bcrypt.genSalt(10);
-        //const bcryptPassword = await bcrypt.hash(password, salt);
+        //Validation Check to Ensure that A User Already Exists
+        const presentuser = await pool.query("SELECT * FROM userjwttwo WHERE email = $1", [email]);
 
-        // this is the query to actually register Users
-        const newUser = await pool.query("INSERT INTO usersjwt (name, email, password) VALUES ($1, $2, $3) RETURNING *", [name, email, password]);
-        
+        if (presentuser.rows.length !== 0) {
+            return res.status(401).json("User already exist!");
+        }
 
-        //IMPORTANT THIS IS WHERE JWT TOKEN ARE CREATED
-        // The Method in the Video does not Work
-        const jwtToken = jwtGenerator(newUser.rows[0].id);
+        //used to encrypt passwords on the database
+        let hashedpassword = await bcrypt.hash(password, 10)
 
-        return res.json({ jwtToken });
+        const user = await pool.query("INSERT INTO userjwttwo (name, email, password) VALUES ($1, $2, $3) RETURNING *", [name, email, hashedpassword ]);
+    
+        const token = jwtGenerator(user.rows[0].id)
+
+        console.log(hashedpassword, email)
+
+        res.json({token})
 
         
     } catch (err) {
@@ -56,33 +60,42 @@ app.post("/JWT/register", validinfo,  async (req, res) =>{
 })
 
 //--Login User--
-app.post("/JWT/login",validinfo, async (req, res) =>{
-
-    // Required Remake but works now
+app.post("/JWT/login", async (req, res) =>{
     try {
-        const {email, password} = req.body
 
-        const user = await pool.query("SELECT * FROM usersjwt WHERE email = $1", [email]);
+        const {password, email} = req.body
+    
+        const user = await pool.query("SELECT * FROM userjwttwo WHERE email = $1", [email]);
 
         if (user.rows.length === 0) {
-            return res.status(401).json("Invalid Credential");
+            return res.status(422).json({
+                errors: [
+                    {
+                        msg: "Invalid Email",
+                    }
+                ]
+            })
         }
-      
+
         const validPassword = await bcrypt.compare(
             password,
             user.rows[0].password
         );
-      
+    
         if (!validPassword) {
-            return res.status(401).json("Invalid Credential");
+            return res.status(404).json({
+                errors: [
+                    {
+                        msg: "Invalid Password" 
+                    }
+                ]
+            })
         }
-        else{
-            return res.status(401).json("User exist!");
-
-        }
-
-        //Next is the JWT Token
         
+        const token  = jwtGenerator(user.rows[0].id)
+
+        res.json({token})
+
     } catch (err) {
         console.error(err.message)
         res.status(500).send("Server Error")
@@ -91,33 +104,51 @@ app.post("/JWT/login",validinfo, async (req, res) =>{
 })
 
 //--Verfiy User JWT Token--
-
-//Display UserName on Dashboard
-//--This is a Get Method--
-app.get("/JWT/dashboard/name", async (req, res) => {
+// This is a GET
+app.get("/JWT/verify",async (req , res ) =>{
     try {
 
-        const user = await pool.query("SELECT name FROM usersjwt WHERE id = $1",[req.user] ); 
-        res.json(user.rows[0]);
-        
+        res.json(true)
+
     } catch (err) {
-        console.error(err.message)
-        res.status(500).send("Server Error")
+
+        console.error(err.message);
+        res.status(500).send("Server error");
         
     }
 
 })
 
+//Display UserName on Dashboard
+//--This is a Get Method--
+//Make this a GET Specific Data Name Rather
+
+app.get("/JWT/Dash/Name", async (req, res) => {
+    try {
+       
+        const user = await pool.query("SELECT * FROM userjwttwo WHERE id = $1 ", [req.user])
+        console.log(req.user)
+        res.json(user.rows[0])
+        
+    } catch (err) {
+        console.error(err.message)
+        
+    }
+
+})
+
+//Probbaly Change the Method of Genenration.
+//
+
 function jwtGenerator(id) {
+    
     const payload = {
-      newuser: {
-        id: id
-      }
-    };
+        user:id
+    }
 
-    return jwt.sign(payload, process.env.Access_Token_Secret);
+    return jwt.sign(payload, "CAT123")
+
 }
-
 
 
 app.listen(5000, () =>{

@@ -20,5 +20,24 @@ INSERT INTO usersjwt(name, email, password) VALUES ('max', 'max123@gmail.com','m
 
 select * from usersjwt ;
 
-DELETE from usersjwt where name = 'maxie' ;
+DELETE from usersjwt where name = 'max' ;
+
+CREATE TABLE userjwttwo(
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL
+    
+);
+
+//SQL Commands
+
+select * from userjwttwo;
+
+INSERT INTO userjwttwo(name, email, password) VALUES ('max', 'max123@gmail.com','max123');
+
+DROP Table userjwttwo ;
+
+DELETE from userjwttwo where name = 'max' ;
+
 
