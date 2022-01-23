@@ -134,22 +134,22 @@ app.get("/jwt/public/all", async (req,res)=>{
 //Get Private Posts All
 // It Works as Intended but I need to Change Certain Aspects
 
-// app.get("/jwt/dashboard", jwtAuth, async (req,res)=>{
+app.get("/jwt/dashboard", jwtAuth, async (req,res)=>{
 
-//     try {
+    try {
 
-//      //const public = await pool.query("SELECT * FROM usersjwt");
-//       const public = await pool.query("SELECT * FROM  usersjwt WHERE email = $1",[req.user]);
-//      // The Code here with the req.user WORKS BABY IT WORKS.
-//       //res.json(public.rows);
-//       res.json(public.rows[0]);
-//       //res.send("This is Working")
+     //const public = await pool.query("SELECT * FROM usersjwt");
+      const public = await pool.query("SELECT * FROM  usersjwt WHERE email = $1",[req.user]);
+     // The Code here with the req.user WORKS BABY IT WORKS.
+      //res.json(public.rows);
+      res.json(public.rows[0]);
+      //res.send("This is Working")
         
-//     } catch (err) {
-//         console.error(err.message)
-//     }
+    } catch (err) {
+        console.error(err.message)
+    }
 
-// })
+})
 
 //Verify Token
 //Works as Intended
