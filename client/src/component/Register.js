@@ -7,16 +7,21 @@ const Register = ({setAuth}) => {
   const [email, setEmail] =useState("")
   const [password, setPassword] = useState("")
 
+  //This Works as Intended in the Video.
   const handleSubmit = async e =>{
     e.preventDefault();
     try {
 
       const body = { email, password, name };
-      const response = await fetch("http://localhost:5000/JWT/register",{
+      const response = await fetch("http://localhost:5000/jwt/register",{
          method: "POST",
          headers: {"Content-Type": "application/json"},
          body: JSON.stringify(body)
       });
+
+      const parseData = await response.json()
+
+      localStorage.setItem("authtoken", parseData.token)
 
       setAuth(true)
       

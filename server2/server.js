@@ -6,7 +6,7 @@ const {check , validationResult} = require ("express-validator")
 const jwt = require('jsonwebtoken') // used to generate JWT
 const jwtAuth = require("./checkAuth")
 const app = express();
-//const auth = require("./authurization")
+
 
 //middleware
 app.use(cors())
@@ -139,7 +139,7 @@ app.get("/jwt/dashboard", jwtAuth, async (req,res)=>{
     try {
 
      //const public = await pool.query("SELECT * FROM usersjwt");
-      const public = await pool.query("SELECT * FROM  usersjwt WHERE email = $1",[req.user]);
+      const public = await pool.query("SELECT name FROM  usersjwt WHERE email = $1",[req.user]);
      // The Code here with the req.user WORKS BABY IT WORKS.
       //res.json(public.rows);
       res.json(public.rows[0]);

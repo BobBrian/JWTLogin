@@ -10,13 +10,16 @@ const Login = ({setAuth}) => {
         e.preventDefault();
         try {
             const body = { email, password };
-            const response = await fetch("http://localhost:5000/JWT/login",{
+            const response = await fetch("http://localhost:5000/jwt/login",{
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(body)
-          });
+            });
 
-          setAuth(true);
+            const parseRes = await response.json()
+            //console.log(parsRes)
+            localStorage.setItem("authtoken", parseRes.token)
+            setAuth(true);
             
         } catch (err) {
             console.error(err.message)
