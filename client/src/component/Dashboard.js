@@ -1,4 +1,6 @@
 import React,{Fragment , useState , useEffect} from 'react'
+import { toast} from 'react-toastify';
+import TableDetails from './TableDetails';
 
 const Dashboard = ({setAuth}) => {
 
@@ -9,9 +11,8 @@ const Dashboard = ({setAuth}) => {
         try {
             const response = await fetch("http://localhost:5000/jwt/dashboard",{
                 method: "GET",
-                headers: {authtoken: localStorage.token}
+                headers: {token: localStorage.token}
             })
-
             // basically the header goes like this  - the header name is first then then name the JWT token
             // is written as.
             const parseRes = await response.json()
@@ -30,19 +31,26 @@ const Dashboard = ({setAuth}) => {
 
     const logout = (e) =>{
         e.preventDefault()
-        localStorage.removeItem("authtoken")
+        localStorage.removeItem("token")
         setAuth(false)
+        toast.success("You Logged Out Succesfully")
     }
 
     return (
         <Fragment>
             <div>
-                <h1 className="mt-5">Dashboard</h1>
+                <h1 className="mt-5">Dashboard Introduction</h1>
                 <h2>Welcome {name} </h2>
                 <button className="btn btn-primary" onClick={e => logout(e)} >
                     Logout
                 </button>
             </div>
+
+            <div>
+                <h1>Table Information ges here </h1>
+                <TableDetails/>
+            </div>
+        
         </Fragment>
     )
 }

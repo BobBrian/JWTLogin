@@ -1,7 +1,7 @@
 const JWT = require('jsonwebtoken')
 
 module.exports = async (req,res,next) =>{
-    const token  = req.header('authtoken')
+    const token  = req.header('token')
 
     if(!token){
         return res.status(400).json({
@@ -16,10 +16,10 @@ module.exports = async (req,res,next) =>{
    
    try {
 
-    let user = await JWT.verify(token,"MEGARANGER123")
-    req.user = user.email
-    next()
-       
+        let user = await JWT.verify(token,"MEGARANGER123")
+        req.user = user.email
+        next()
+        
    } catch (err) {
 
         return res.status(400).json({

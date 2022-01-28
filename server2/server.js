@@ -169,6 +169,24 @@ app.get("/jwt/verify", jwtAuth, async (req,res)=>{
 
 })
 
+//get Table Information
+app.get("/jwt/tableA", async (req,res)=>{
+
+    try {
+
+        //code to generate data
+        const alltableA = await pool.query("SELECT * FROM tableA ");
+        res.json(alltableA.rows);
+        
+    } catch (err) {
+
+        console.error(err.message);
+        res.status(500).send("Server error");
+        
+    }
+
+})
+
 
 app.listen(5000, () =>{
 

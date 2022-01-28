@@ -1,5 +1,6 @@
 import React,{Fragment, useState} from 'react'
 import { Link, Redirect } from "react-router-dom";
+import { toast, ToastContainer } from 'react-toastify';
 
 const Register = ({setAuth}) => {
 
@@ -20,10 +21,16 @@ const Register = ({setAuth}) => {
       });
 
       const parseData = await response.json()
-
-      localStorage.setItem("authtoken", parseData.token)
-
-      setAuth(true)
+      if(parseData.token){
+        
+        localStorage.setItem("token", parseData.token)
+        setAuth(true)
+        toast.success("Login Succesfull")
+    
+      }else{
+        setAuth(false)
+        toast.error(parseData)
+      }
       
     } catch (err) {
 

@@ -3,6 +3,11 @@ import { BrowserRouter as Router, Route, Switch, Redirect ,Link} from "react-rou
 import Login from "./component/Login";
 import Register from "./component/Register";
 import Dashboard from "./component/Dashboard";
+import { UserProvider } from './context/UserContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+toast.configure();
 
 const App = () => {
 
@@ -19,7 +24,7 @@ const App = () => {
 
       const response = await fetch("http://localhost:5000/jwt/verify",{
         method: "GET",
-        headers: {authtoken: localStorage.token}
+        headers: {token: localStorage.token}
       })
 
       const parseVerify = await response.json()
@@ -39,7 +44,7 @@ const App = () => {
   })
 
   return (
-    <Fragment>
+    <UserProvider>
       <Router>
         <div className='container'>
           <Switch>
@@ -56,7 +61,9 @@ const App = () => {
           
         </div>
       </Router>
-    </Fragment>
+    </UserProvider>
+      
+    
   )
 }
 
