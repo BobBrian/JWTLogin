@@ -18,7 +18,10 @@ const App = () => {
   const setAuth = boolean => {
     setIsAuthenticated(boolean);
   };
-
+  
+  // This is here to insure that once you are loged in then you cannot be 
+  // Loggedout when you refresh.
+  
   async function isAuth(){
     try {
 

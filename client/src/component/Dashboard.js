@@ -47,7 +47,7 @@ const Dashboard = ({setAuth}) => {
             </div>
 
             <div>
-                <h1>Table Information ges here </h1>
+                <h1>Table Information goes Here </h1>
                 <TableDetails/>
             </div>
         
