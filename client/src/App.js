@@ -64,9 +64,7 @@ const App = () => {
           
         </div>
       </Router>
-    </UserProvider>
-      
-    
+    </UserProvider> 
   )
 }
 
